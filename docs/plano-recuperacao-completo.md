@@ -331,6 +331,62 @@ anterior desta conversa (`backup-flash-nixos.md`) e continua válido sem
 alterações — a única mudança é que agora sabemos que a arquitetura por
 trás dos bytes é F1C100s + DGUS, o que ajuda a interpretar o que for lido.
 
+### 4.3 Frente C — Híbrida: gravar o `dcboot.bin` direto na flash
+
+Combina o transporte da Frente A ou B com o conteúdo oficial do
+procedimento de duas fases (§2.6–§2.7). Em vez de depender do SD —
+que exige algum código vivo na tela para ler o cartão e aplicar a
+fase 1 — grava-se o `dcboot.bin` diretamente na flash, restaurando o
+bootloader sem depender de nada sobrevivente no chip.
+
+Viabilidade confirmada pela análise do cabeçalho:
+
+- Instrução inicial `ea000006` (branch ARM pulando o cabeçalho) +
+  magic `eGON.EXE` + tamanho declarado = tamanho real (101.888 bytes).
+- É uma imagem de boot autocontida, pronta para execução direta pelo
+  F1C100s a partir da flash.
+
+Duas formas de transporte:
+
+**Via FEL (preferível):**
+
+```bash
+sunxi-fel spiflash-write 0 dcboot.bin
+```
+
+Escreve no offset 0 (posição padrão de boot em SPI NOR para sunxi),
+sem exigir arquivo de 16 MB. Depois conferir lendo de volta:
+
+```bash
+sunxi-fel spiflash-read 0 101888 dcboot_verificado.bin
+sha256sum dcboot.bin dcboot_verificado.bin   # devem bater
+```
+
+**Via clipe SOIC-8:** o `spi_tool.py` exige arquivos de exatamente
+16 MB — padar o `dcboot.bin` com `0xFF` antes:
+
+```bash
+python3 - <<'EOF'
+data = open('dcboot.bin','rb').read()
+assert len(data) <= 16777216 - 0x1000
+open('dcboot_padded_16mb.bin','wb').write(data + b'\xff' * (16777216 - len(data)))
+EOF
+# então: python3 tools/spi_tool.py write dcboot_padded_16mb.bin
+```
+
+Ressalvas e segurança:
+
+- **Offset 0 é hipótese padrão sunxi**; um dump diagnóstico prévio
+  (§4.1.4 / §4.2) confirma, comparando os primeiros 32 bytes do dump
+  atual com o formato eGON.
+- Workflow obrigatório se mantém: **dump → backup verificado → só
+  então escrever → ler de volta e comparar sha256 dos primeiros
+  101.888 bytes.**
+- Risco incremental baixo: a área alvo já está corrompida.
+- Com o bootloader restaurado, a fase 2 (OS + assets) volta a ser
+  possível pela via normal do SD (`firmware.zlib`), seguindo o
+  `docs/tutorial-recuperacao-sd.md`.
+
 ---
 
 ## 5. Busca por imagem de referência confiável
@@ -373,13 +429,17 @@ pronto).
    custo zero
 5. Decisão: se achar trilha acessível sem solda em componente próximo →
    conectar USB e testar `sunxi-fel version` (Seção 4.1.3)
-6. Se não houver ponto acessível → avaliar se vale soldar direto no
+6. **Se o SD falhar (passo 1) e houver acesso FEL → Frente C (§4.3):
+   gravar `dcboot.bin` direto na flash** (`sunxi-fel spiflash-write 0
+   dcboot.bin`), depois fase 2 via SD. Alternativa sem FEL: mesma
+   gravação via clipe SOIC-8 com a imagem padada para 16 MB (§4.3)
+7. Se não houver ponto acessível → avaliar se vale soldar direto no
    QFN88 (considerar buscar ajuda de alguém com experiência em retrabalho
    fino, se você não tiver)
-7. Assim que houver imagem confiável (doador via Frente B, ou dump da
+8. Assim que houver imagem confiável (doador via Frente B, ou dump da
    comunidade) → gravar via FEL (mais seguro) ou via clipe SOIC-8
    (alternativa)
-8. Verificar sempre lendo de volta e comparando hash antes de remontar
+9. Verificar sempre lendo de volta e comparando hash antes de remontar
 
 ---
 
