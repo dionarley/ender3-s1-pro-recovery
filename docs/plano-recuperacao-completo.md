@@ -157,6 +157,40 @@ Implicações críticas:
   pacote é mesmo do S1 **Pro** — aplicar pacote do modelo errado foi a
   causa raiz do brick (§1).
 
+### 2.7 Análise do `dcboot.bin` — kit de recuperação SD completo
+
+O `dcboot.bin` (101.888 bytes) foi obtido e adicionado ao repositório.
+Análise confirma que é a peça da fase 1:
+
+- **Cabeçalho `eGON.EXE`** — formato oficial de imagem de boot da
+  Allwinner (mesmo formato do boot0 do F1C100s); primeira instrução é
+  um branch ARM pulando o cabeçalho. É código de boot para o SoC da
+  tela, sem ambiguidade.
+- Strings internas: `BOOT_DC48270M043.bin` / `DC48270M043.zlib`
+  (compatíveis com o silkscreen da tela `...M043`), `flash_erase_sector`,
+  `spinor_wrsr`, `'3:/firmware.zlib'`, `zlib_size=%d`,
+  `update finished!` — é o bootloader que lê o `firmware.zlib` do SD e
+  grava na flash SPI.
+- Os drivers de flash são os mesmos do OS descomprimido em §2.6 —
+  mesma pilha, peças coerentes entre si.
+
+**Status: kit completo da via SD**, agora todo versionado no repo:
+
+| Fase | Arquivo | Função |
+|---|---|---|
+| 1 | `dcboot.bin` | regrava a área de boot |
+| 2 | `firmware.zlib` | regrava o OS |
+| 2 | `private/` (+ `DWIN_SET/`) | assets (a tela escolhe a pasta da sua variante) |
+
+Procedimento do Readme oficial (§2.6): formatar cartão FAT32 com
+unidade de alocação **4096 bytes**; fase 1 = apenas `dcboot.bin`;
+fase 2 = remover `dcboot.bin` e colocar os demais.
+
+Descartado no processo: um `Ender-3S1_Pro_..._F103_FDM_LASER.bin` que
+chegou a ser baixado junto — é firmware de **placa-mãe STM32F103**
+(vetores em `0x08000000`), não da tela; a placa local é F401. Não usar,
+não versionado.
+
 ---
 
 ## 3. O que já foi tentado e descartado
@@ -325,11 +359,12 @@ pronto).
 
 ## 6. Ordem de execução recomendada
 
-1. **Obter o `dcboot.bin` oficial do S1 Pro (Seção 5, item 1) e
-   confirmar a compatibilidade do pacote com a unidade (Seção 2.6)** —
-   se obtido, tentar primeiro o procedimento SD em duas fases do Readme
-   oficial: fase 1 (`dcboot.bin`) → fase 2 (`private/` + assets +
-   `firmware.zlib`). É o único caminho que pode resolver **sem solda**
+1. **Tentar o procedimento SD em duas fases (§2.7) — o kit está
+   completo e versionado no repo (`dcboot.bin` + `firmware.zlib` +
+   `private/` + `DWIN_SET/`).** Fase 1 = apenas `dcboot.bin`; fase 2 =
+   remover `dcboot.bin` e colocar os demais. É o único caminho que pode
+   resolver **sem solda**. Se falhar, obter alternativa: buscar outra
+   fonte do `dcboot.bin` oficial do S1 Pro e confirmar compatibilidade
 2. Preparar ambiente NixOS atualizado (Seção 4.1.1) — baixo risco, faça
    já
 3. Teste de continuidade nos pinos 67–70 (Seção 4.1.2) — baixo risco,
