@@ -86,6 +86,39 @@ toque, sem resposta ao processo normal de atualização via SD.
   a imagem final de 16MB — os tamanhos variam (alguns acima de 2MB),
   descartando a hipótese de slots fixos de 256KB por ID
 
+### 2.5 Análise do material stock local — pasta `private/` (formato DACAI)
+
+Inventário completo (101 arquivos, **13.700.189 bytes ≈ 13 MB** — cabe
+na flash de 16 MB, ao contrário do DWIN_SET com seus 28,8 MB):
+
+| Conteúdo | Detalhes |
+|---|---|
+| `icon/*.zico` | 16 contêineres de ícones; maior: `25.zico` (4 MB) |
+| `image/*.zbmp` | 77 bitmaps comprimidos |
+| `bin/22.bin` | Config geral, exatamente 131.076 bytes |
+| `bin/13.bin`, `14.bin`, `pinyin.bin` | Touch config / show config / método de entrada |
+| `truefont/font.ttf` + `truefont.ini` | Fonte TTF (190 KB) |
+| `main.lua`, `config.txt` | `set_uint16(0x110e, ...)` / `set_auto_notify(1)`; UART 115200 |
+
+Achados técnicos:
+
+- **`.zico` é um contêiner parseável**: magic ASCII `ZICO` seguido de
+  tabela de entradas com offsets/tamanhos em texto claro.
+- **`.zbmp` é cabeçalho pequeno + stream zlib padrão** (`789c`) —
+  descomprimível direto.
+- O `main.lua` usa as mesmas chamadas DGUS-style da §2.4, confirmando a
+  camada K600+ também na pilha DACAI.
+- Os `22.bin` das duas pilhas têm o mesmo tamanho (131.076) mas hashes
+  SHA-256 diferentes — são stacks genuinamente distintas.
+- Nenhum binário de boot/OS aqui também — só assets.
+
+**Implicação estratégica:** se a unidade for da variante DACAI/F1C100s,
+este é o material de referência correto (13 MB compatíveis com flash de
+16 MB com espaço para OS+boot). No dump diagnóstico via FEL (§4.1.4),
+procurar os bytes de `truefont/font.ttf` ou de uma entrada do
+`25.zico` no dump: match exato confirma a variante **e** revela os
+offsets do empacotamento.
+
 ---
 
 ## 3. O que já foi tentado e descartado
@@ -97,6 +130,7 @@ toque, sem resposta ao processo normal de atualização via SD.
 | Busca por dump de 16MB público (GitHub, Reddit, fóruns DWIN, Creality) | Nenhum encontrado |
 | Inspeção do branch `Firmware-Binaries` de ThomasToka/MarlinFirmware (2026-08) | Sem imagem de 16MB. `Stock_Creality_F28_105_...DWIN_SET.zip` contém exatamente o mesmo DWIN_SET já no repo (2.241 arquivos, 28.832.565 bytes). `T5L_OS_DGUS2_V10.BIN` tem só 11 KB — patch de kernel para T5L real via SD, não aplicável ao F1C100s confirmado fisicamente |
 | Assets stock do fork ThomasToka (`DWIN_SET/`) como solução direta | Descartado: são assets de SD (~28,8 MB em 2.219 arquivos soltos), não imagem de flash; não contêm boot/OS do F1C100s; e o caminho SD já está confirmado morto (§3, linha acima). Servem como referência para mapear offsets contra um dump futuro |
+| Análise da pasta `private/` (formato DACAI) como solução direta | Sem binário de boot/OS também — não resolve sozinha. Mas é a referência mais promissora: 13 MB compatíveis com a flash, `.zico` parseável e `.zbmp` em zlib (ver §2.5). Usar no dump FEL para identificar variante + offsets |
 | Reconstrução manual da imagem a partir dos arquivos oficiais | Inviável sem o algoritmo de empacotamento proprietário da DWIN/Creality |
 
 ---
