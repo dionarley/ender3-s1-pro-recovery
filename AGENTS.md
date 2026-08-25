@@ -26,6 +26,7 @@ Verified facts (do not guess or "fix" these when editing docs):
 - `.gitignore` blocks `*.bin` / `dump*.bin` / `backup*.bin`. Never commit flash dumps (16MB each, hardware-specific).
 - `DWIN_SET/` is stock display UI assets copied from github.com/ThomasToka/MarlinFirmware — reference material only, don't modify.
 - `private/` is the stock DACAI-variant assets from the same fork — also reference material only. It is the primary offset-mapping reference (13 MB, parseable `.zico`/`.zbmp` formats; see plano §2.5). Don't modify.
+- `dcboot.bin` (eGON/Allwinner screen bootloader) + `firmware.zlib` (zlib-compressed screen OS) are the official two-phase SD recovery kit; `dcboot.bin` is also written raw at flash offset 0 in the "Frente C" hybrid approach (plano §4.3). Don't modify or re-encode them.
 
 ## Environment
 
@@ -35,7 +36,7 @@ Verified facts (do not guess or "fix" these when editing docs):
 ## Tooling gotchas
 
 - `tools/spi_tool.py` has a hardcoded `PORT = 'COM5'` near the top — change to `/dev/ttyACM0` before running on Linux. Baud is fixed at 250000; full dump takes ~15–20 min.
-- Flash chip is exactly 16 MB (`16777216` bytes). `write` and `verify` refuse files of any other size; validate dumps by exact size + double-dump sha256 comparison before trusting them.
+- Flash chip is exactly 16 MB (`16777216` bytes). `write` and `verify` refuse files of any other size; validate dumps by exact size + double-dump sha256 comparison before trusting them. Exception: the "Frente C" flow pads `dcboot.bin` with `0xFF` to 16 MB before writing (see plano §4.3).
 - `arduino-cli compile` requires the `.ino` inside a subfolder of the same name (`spi_flash_programmer/spi_flash_programmer.ino`) — Arduino sketch format requirement, not an error.
 - USB serial device name can change between boots (`ttyACM0` → `ttyACM1`); always run `arduino-cli board list` first.
 

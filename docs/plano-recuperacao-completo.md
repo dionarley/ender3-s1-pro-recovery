@@ -476,11 +476,39 @@ Firmware testado:  Ender-3 S1_Pro_HWv24S1_301_SWV2.0.8.26F4_FDM_LASER
                    (não requer dcboot.bin nesta versão)
 ```
 
-## Apêndice B: Arquivos já gerados nesta conversa
+## Apêndice B: Inventário de arquivos do repositório
 
-- `spi_flash_programmer.ino` — firmware Arduino para leitura/gravação
-  via clipe SOIC-8 (Frente B)
-- `spi_tool.py` — script Python de controle (dump/erase/write/verify)
-- `backup-flash-nixos.md` — guia detalhado de ambiente NixOS para a
-  Frente B
-- Este documento — plano consolidado com as duas frentes
+### Ferramentas
+
+- `tools/spi_flash_programmer.ino` — firmware Arduino para
+  leitura/gravação via clipe SOIC-8 (Frente B)
+- `tools/spi_tool.py` — script Python de controle (dump/erase/write/verify)
+- `nix/shell.nix` — ambiente NixOS (arduino-cli, python3+pyserial,
+  sunxi-tools, lsusb)
+
+### Kit de recuperação SD (§2.6–§2.7)
+
+- `dcboot.bin` — bootloader eGON/Allwinner da tela; fase 1 (regrava a
+  área de boot); também usado direto na flash na Frente C (§4.3)
+- `firmware.zlib` — OS da tela comprimido (magic `ZLIB` + zlib);
+  fase 2
+- `private/` — assets stock variante DACAI (fase 2; referência
+  primária de offsets, §2.5)
+- `DWIN_SET/` — assets stock variante DWIN (fase 2; a tela escolhe a
+  pasta da sua variante)
+
+### Documentação
+
+- `README.md` — visão geral e hardware confirmado
+- Este documento — plano consolidado e log de investigação canônico
+- `docs/tutorial-recuperacao-sd.md` — tutorial passo a passo da
+  recuperação SD em duas fases
+- `docs/backup-flash-nixos.md` — guia detalhado de ambiente NixOS para
+  a Frente B
+- `docs/Readme_firmware_update_CN_EN.txt` — Readme oficial Creality do
+  pacote de atualização (GBK), com o procedimento em duas fases
+- `docs/XM25QH128C_Ver2.1.pdf` — datasheet da flash SPI
+- `docs/3D Printer User Manual Ender-3 S1 Pro.pdf` — manual oficial da
+  impressora
+- `AGENTS.md` — orientações para sessões de agente
+- `images/` — fotos da placa/chip

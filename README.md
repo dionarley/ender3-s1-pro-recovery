@@ -56,21 +56,24 @@ hipóteses (DWIN T5L, TJC), estão em `docs/plano-recuperacao-completo.md`.
 
 ```
 .
-├── README.md                          este arquivo
+├── dcboot.bin                          bootloader eGON/Allwinner da tela (fase 1 da recuperação SD; Frente C)
+├── firmware.zlib                       OS da tela comprimido (fase 2)
+├── README.md                           este arquivo
 ├── docs/
-│   ├── plano-recuperacao-completo.md  plano atualizado com todos os dados confirmados
-│   ├── tutorial-recuperacao-sd.md     tutorial passo a passo da recuperação via SD (2 fases)
-│   ├── backup-flash-nixos.md          guia de ambiente NixOS + backup via clipe SOIC-8
+│   ├── plano-recuperacao-completo.md   plano atualizado com todos os dados confirmados
+│   ├── tutorial-recuperacao-sd.md      tutorial passo a passo da recuperação via SD (2 fases)
+│   ├── backup-flash-nixos.md           guia de ambiente NixOS + backup via clipe SOIC-8
+│   ├── Readme_firmware_update_CN_EN.txt Readme oficial Creality do pacote de atualização
 │   ├── 3D Printer User Manual Ender-3 S1 Pro.pdf  manual oficial
-│   └── XM25QH128C_Ver2.1.pdf          datasheet da flash SPI
-├── DWIN_SET/                          assets stock variante DWIN (referência; não é imagem de flash)
-├── private/                           assets stock variante DACAI (referência; ver §2.5 do plano)
-├── images/                            fotos da placa/chip para documentação
+│   └── XM25QH128C_Ver2.1.pdf           datasheet da flash SPI
+├── DWIN_SET/                           assets stock variante DWIN (referência; não é imagem de flash)
+├── private/                            assets stock variante DACAI (referência; ver §2.5 do plano)
+├── images/                             fotos da placa/chip para documentação
 ├── tools/
-│   ├── spi_flash_programmer.ino       firmware Arduino (leitura/gravação SPI via clipe)
-│   ├── spi_tool.py                    script Python de controle (dump/erase/write/verify)
+│   ├── spi_flash_programmer.ino        firmware Arduino (leitura/gravação SPI via clipe)
+│   └── spi_tool.py                     script Python de controle (dump/erase/write/verify)
 └── nix/
-    └── shell.nix                      ambiente reprodutível (arduino-cli, sunxi-tools, python)
+    └── shell.nix                       ambiente reprodutível (arduino-cli, sunxi-tools, python)
 ```
 
 ## Duas frentes de recuperação
