@@ -1,0 +1,15 @@
+# Dumps de flash (grandes, não devem ir pro git sem pensar)
+*.bin
+dump*.bin
+backup*.bin
+
+# Python
+__pycache__/
+*.pyc
+
+# Arduino build
+build/
+.arduino/
+
+# Sistema
+.DS_Store
