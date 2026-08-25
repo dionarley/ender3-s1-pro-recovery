@@ -8,6 +8,17 @@ Documentation + tooling for recovering the bricked touch display of a Creality E
 - `docs/plano-recuperacao-completo.md` — canonical investigation log; trust this over any prose elsewhere
 - `docs/backup-flash-nixos.md` — step-by-step flash dump/write procedure
 
+## Confirmed hardware
+
+Verified facts (do not guess or "fix" these when editing docs):
+
+- Printer: Creality Ender-3 S1 Pro; mainboard `CR-FDM-v2.4.S1_v301` (STM32F401).
+- Display board: `4SZCX4800M043` / `V434.HYS` Rev 1.1 (silkscreen).
+- Display SoC: **Allwinner F1C100s** (QFN88) — NOT a DWIN T5L ASIC, NOT DACAI silicon. FEL mode over USB appears as `1f3a:efe8`; relevant pins: 67 UVCC (3.3V), 68 USB-DM, 69 USB-DP, 70 RESET#.
+- SPI flash: XMC XM25QH128CHIG — 128 Mbit / 16 MB / exactly `16777216` bytes.
+- Software layer: DGUS/K600+ conventions (Lua VP calls; `13.bin`/`14.bin`/`22.bin`) running over the Allwinner SoC. Whether this unit is the DWIN or DACAI display *variant* is an open question — never state it as settled.
+- No public algorithm exists to pack the stock asset folders (`DWIN_SET/`, `private/`) into the final 16 MB flash image — this remains the project's bottleneck.
+
 ## Conventions
 
 - All docs and code comments are written in **Portuguese (pt-BR)**. Keep new content consistent.

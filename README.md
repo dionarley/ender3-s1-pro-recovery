@@ -28,9 +28,11 @@ hardware real da tela do S1 Pro.
 |---|---|
 | Impressora | Creality Ender-3 S1 Pro |
 | Placa-mãe | CR-FDM-v2.4.S1_v301 (STM32F401) |
-| SoC da tela | Allwinner F1C100s (QFN88, 10×10mm) |
-| Flash SPI | XMC XM25QH128CHIG, 16MB |
-| Camada de software | Formato DACAI (pasta `private/`), com scripts em Lua |
+| Placa da tela | `4SZCX4800M043` / `V434.HYS` Rev 1.1 (confirmado por silkscreen) |
+| SoC da tela | Allwinner F1C100s (QFN88, 10×10mm; silkscreen `F1C100s ALLWINNERTECH`) |
+| Flash SPI | XMC XM25QH128CHIG, 128 Mbit / 16 MB / 16.777.216 bytes, SPI simples |
+| USB FEL | VID:PID `1f3a:efe8` (padrão Allwinner, modo FEL da boot ROM) |
+| Camada de software | Convenções DGUS/K600+ (DWIN) sobre o SoC Allwinner — chamadas de VP em Lua, arquivos `13.bin`/`14.bin`/`22.bin`. **Variante física DWIN vs DACAI ainda não resolvida** |
 
 Pinos relevantes do F1C100s para acesso via modo FEL (USB):
 
