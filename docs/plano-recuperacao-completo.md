@@ -119,6 +119,44 @@ procurar os bytes de `truefont/font.ttf` ou de uma entrada do
 `25.zico` no dump: match exato confirma a variante **e** revela os
 offsets do empacotamento.
 
+### 2.6 Análise do `firmware.zlib` — procedimento oficial em duas fases
+
+O arquivo `firmware.zlib` (394.835 bytes) e o Readme oficial de
+atualização (`docs/Readme_firmware_update_CN_EN.txt`, originalmente em
+GBK) foram adicionados ao repositório. Análise:
+
+- Formato: magic ASCII `ZLIB` + cabeçalho little-endian com tamanho
+  descomprimido (758.252) e comprimido (394.819); stream zlib padrão a
+  partir do offset 16.
+- Descomprimido, contém **758 KB de código ARM**: o sistema operacional
+  da tela. Strings confirmam drivers diretos da flash SPI
+  (`read_flash`, `write_flash`, `flash_init`, `spinor_wrsr`), máquina
+  de estados `UPDATE_BOOT!` / `UPDATE_FIRMWARE!`, carregamento dos
+  formatos da pilha DACAI (`3:/icon/%d.zico`, `3:/image/%d.zbmp`) e
+  interpretador Lua 5.3.4 embutido (bate com o `main.lua`).
+
+O Readme documenta o **procedimento oficial de atualização da tela em
+duas fases via SD**:
+
+1. **Fase 1:** apenas `dcboot.bin` no cartão → reiniciar → regrava a
+   **área de boot**
+2. **Fase 2:** remover `dcboot.bin`; colocar `private/`, `TJC_SET`,
+   `DWIN_SET` e `firmware.zlib` → reiniciar → regrava OS + assets
+
+Implicações críticas:
+
+- O teste SD anterior (§3) usou o pacote V2.0.8.26F4 **sem
+  `dcboot.bin`**. Para área de boot corrompida, o procedimento oficial
+  começa justamente pelo `dcboot.bin` — o único arquivo que regrava o
+  setor de boot pela via SD, sem solda nem FEL.
+- **`dcboot.bin` não está no repositório** — precisa ser obtido do
+  pacote oficial completo. É a peça faltante mais importante agora.
+- **Ressalva de compatibilidade:** o Readme diz "Ender-3 S1 升级版"
+  (versão atualizada do S1) e lista as três pastas de tela
+  (TJC_SET/DWIN_SET/private). Antes de qualquer uso, confirmar que este
+  pacote é mesmo do S1 **Pro** — aplicar pacote do modelo errado foi a
+  causa raiz do brick (§1).
+
 ---
 
 ## 3. O que já foi tentado e descartado
@@ -266,6 +304,9 @@ trás dos bytes é F1C100s + DGUS, o que ajuda a interpretar o que for lido.
 Com os termos corretos agora identificados, vale reabrir a busca —
 específica e diferente da anterior:
 
+- **`dcboot.bin` oficial do S1 Pro** — prioridade máxima (ver §2.6):
+  buscar no site da Creality, nos releases ZIP do fork ThomasToka e em
+  repositórios/fóruns que espelhem os pacotes de tela oficiais
 - `"F1C100s" "Ender 3 S1 Pro" screen dump`
 - `"K600+" DGUS Creality touchscreen recovery`
 - Fóruns de eletrônica hobbista (elektroda.com, linux-sunxi forums,
@@ -284,21 +325,26 @@ pronto).
 
 ## 6. Ordem de execução recomendada
 
-1. Preparar ambiente NixOS atualizado (Seção 4.1.1) — baixo risco, faça
+1. **Obter o `dcboot.bin` oficial do S1 Pro (Seção 5, item 1) e
+   confirmar a compatibilidade do pacote com a unidade (Seção 2.6)** —
+   se obtido, tentar primeiro o procedimento SD em duas fases do Readme
+   oficial: fase 1 (`dcboot.bin`) → fase 2 (`private/` + assets +
+   `firmware.zlib`). É o único caminho que pode resolver **sem solda**
+2. Preparar ambiente NixOS atualizado (Seção 4.1.1) — baixo risco, faça
    já
-2. Teste de continuidade nos pinos 67–70 (Seção 4.1.2) — baixo risco,
+3. Teste de continuidade nos pinos 67–70 (Seção 4.1.2) — baixo risco,
    sem solda ainda
-3. Busca direcionada por dump da comunidade (Seção 5) — em paralelo,
+4. Busca direcionada por dump da comunidade (Seção 5) — em paralelo,
    custo zero
-4. Decisão: se achar trilha acessível sem solda em componente próximo →
+5. Decisão: se achar trilha acessível sem solda em componente próximo →
    conectar USB e testar `sunxi-fel version` (Seção 4.1.3)
-5. Se não houver ponto acessível → avaliar se vale soldar direto no
+6. Se não houver ponto acessível → avaliar se vale soldar direto no
    QFN88 (considerar buscar ajuda de alguém com experiência em retrabalho
    fino, se você não tiver)
-6. Assim que houver imagem confiável (doador via Frente B, ou dump da
+7. Assim que houver imagem confiável (doador via Frente B, ou dump da
    comunidade) → gravar via FEL (mais seguro) ou via clipe SOIC-8
    (alternativa)
-7. Verificar sempre lendo de volta e comparando hash antes de remontar
+8. Verificar sempre lendo de volta e comparando hash antes de remontar
 
 ---
 
