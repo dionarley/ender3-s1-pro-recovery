@@ -95,6 +95,8 @@ toque, sem resposta ao processo normal de atualização via SD.
 | Recuperação via SD card com pacote errado (S1 comum) | Causou o brick |
 | Recuperação via SD card com pacote correto (S1 Pro, V2.0.8.26F4) | Tela continua preta, só bipe — **confirma que a área de boot/OS está corrompida**, não só os assets |
 | Busca por dump de 16MB público (GitHub, Reddit, fóruns DWIN, Creality) | Nenhum encontrado |
+| Inspeção do branch `Firmware-Binaries` de ThomasToka/MarlinFirmware (2026-08) | Sem imagem de 16MB. `Stock_Creality_F28_105_...DWIN_SET.zip` contém exatamente o mesmo DWIN_SET já no repo (2.241 arquivos, 28.832.565 bytes). `T5L_OS_DGUS2_V10.BIN` tem só 11 KB — patch de kernel para T5L real via SD, não aplicável ao F1C100s confirmado fisicamente |
+| Assets stock do fork ThomasToka (`DWIN_SET/`) como solução direta | Descartado: são assets de SD (~28,8 MB em 2.219 arquivos soltos), não imagem de flash; não contêm boot/OS do F1C100s; e o caminho SD já está confirmado morto (§3, linha acima). Servem como referência para mapear offsets contra um dump futuro |
 | Reconstrução manual da imagem a partir dos arquivos oficiais | Inviável sem o algoritmo de empacotamento proprietário da DWIN/Creality |
 
 ---
