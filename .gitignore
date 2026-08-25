@@ -3,6 +3,9 @@
 dump*.bin
 backup*.bin
 
+# Exceção: bins de config da pasta private/ (assets de referência, <150KB)
+!private/bin/*.bin
+
 # Python
 __pycache__/
 *.pyc
