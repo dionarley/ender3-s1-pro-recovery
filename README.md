@@ -6,8 +6,10 @@ depois de um brick causado por atualização com firmware do modelo errado
 
 **Status atual:** tela preta, apenas bipe ao toque. Recuperação via SD
 card testada com o pacote correto e não funciona — a área de boot/OS da
-flash está corrompida, não apenas os assets de UI. Duas frentes de
-recuperação em andamento (ver `docs/plano-recuperacao-completo.md`).
+flash está corrompida, não apenas os assets de UI. **Kit de recuperação
+SD em duas fases completo** (`dcboot.bin` + `firmware.zlib` + assets) —
+siga o tutorial em `docs/tutorial-recuperacao-sd.md`. Detalhes técnicos
+em `docs/plano-recuperacao-completo.md` (§2.6–§2.7).
 
 Material stock da tela foi localizado no fork ThomasToka/MarlinFirmware
 e está versionado aqui nas duas variantes (`DWIN_SET/` e `private/`),
@@ -57,6 +59,7 @@ hipóteses (DWIN T5L, TJC), estão em `docs/plano-recuperacao-completo.md`.
 ├── README.md                          este arquivo
 ├── docs/
 │   ├── plano-recuperacao-completo.md  plano atualizado com todos os dados confirmados
+│   ├── tutorial-recuperacao-sd.md     tutorial passo a passo da recuperação via SD (2 fases)
 │   ├── backup-flash-nixos.md          guia de ambiente NixOS + backup via clipe SOIC-8
 │   ├── 3D Printer User Manual Ender-3 S1 Pro.pdf  manual oficial
 │   └── XM25QH128C_Ver2.1.pdf          datasheet da flash SPI

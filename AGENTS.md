@@ -7,6 +7,7 @@ Documentation + tooling for recovering the bricked touch display of a Creality E
 - `README.md` — confirmed hardware, root cause
 - `docs/plano-recuperacao-completo.md` — canonical investigation log; trust this over any prose elsewhere
 - `docs/backup-flash-nixos.md` — step-by-step flash dump/write procedure
+- `docs/tutorial-recuperacao-sd.md` — two-phase SD recovery walkthrough (dcboot.bin + firmware.zlib + assets)
 
 ## Confirmed hardware
 
