@@ -474,10 +474,30 @@ pronto).
 6. Se não houver ponto acessível para FEL → avaliar se vale soldar
    direto no QFN88 (considerar buscar ajuda de alguém com experiência
    em retrabalho fino, se você não tiver)
-7. Último recurso: imagem completa de 16 MB (doador via Frente B, ou
-   dump da comunidade) → gravar via FEL (mais seguro) ou via clipe
-   SOIC-8 (alternativa)
+7. Último recurso técnico: imagem completa de 16 MB (doador via Frente
+   B, ou dump da comunidade) → gravar via FEL (mais seguro) ou via
+   clipe SOIC-8 (alternativa)
 8. Verificar sempre lendo de volta e comparando hash antes de remontar
+9. **Se TODAS as tentativas de recuperação falharem → contatar a
+   Creality ANTES de partir para alternativas open-source**:
+   - Suporte oficial Creality (site/loja): relatar o caso — há chance
+     de reposição da tela com desconto ou orientação oficial; uma tela
+     de reposição S1 Pro resolveria de vez e ainda confirmaria a
+     variante (DWIN vs DACAI, §2)
+   - Ter em mãos: modelo exato (`4SZCX4800M043` / `V434.HYS` Rev 1.1),
+     versão do firmware que causou o brick e este histórico
+10. **Somente depois do contato com a Creality, avaliar as saídas
+    open-source**:
+    - **Klipper** (recomendado): impressora 100% funcional **sem
+      tela**, controlada via USB/Raspberry Pi + interface web (Mainsail/
+      Fluidd). A tela touch simplesmente deixa de ser usada — o brick
+      dela deixa de ser bloqueador
+    - Marlin headless via USB/OctoPrint (o firmware atual já permite
+      imprimir sem a tela)
+    - Troca por outra tela: original S1 Pro (ideal), tela de botão
+      ("knob") do S1 comum (compatível com a placa-mãe; ver guia do
+      mriscoc), ou painel externo (ex.: BTT PITR) — cada caso exige
+      verificar compatibilidade de firmware entre tela e placa
 
 ---
 

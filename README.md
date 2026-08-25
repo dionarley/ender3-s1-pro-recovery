@@ -91,6 +91,10 @@ hipóteses (DWIN T5L, TJC), estão em `docs/plano-recuperacao-completo.md`.
 4. **Backup físico via CH341A/Arduino** — diagnóstico, comparação com
    chip doador ou gravação de dump completo.
 
+Se tudo falhar: **contatar a Creality antes** de partir para
+alternativas open-source (Klipper headless, tela de reposição etc.) —
+ver §6 do plano.
+
 O antigo gargalo ("falta imagem de 16 MB") foi contornado pelo kit
 oficial; a ressalva restante é confirmar a origem comum dos arquivos
 do kit (§2.8 do plano).
