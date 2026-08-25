@@ -9,6 +9,12 @@ card testada com o pacote correto e não funciona — a área de boot/OS da
 flash está corrompida, não apenas os assets de UI. Duas frentes de
 recuperação em andamento (ver `docs/plano-recuperacao-completo.md`).
 
+Material stock da tela foi localizado (`DWIN_SET/`, do fork
+ThomasToka/MarlinFirmware), mas **não resolve o brick diretamente**: são
+assets de atualização via SD (não uma imagem de 16 MB) e não contêm a
+área de boot/OS do F1C100s. Serve como referência para mapear offsets
+contra um dump futuro. Detalhes em `docs/plano-recuperacao-completo.md`.
+
 ## Causa raiz
 
 O slot de SD da placa-mãe original quebrou fisicamente. Na tentativa de
@@ -45,10 +51,13 @@ hipóteses (DWIN T5L, TJC), estão em `docs/plano-recuperacao-completo.md`.
 ├── README.md                          este arquivo
 ├── docs/
 │   ├── plano-recuperacao-completo.md  plano atualizado com todos os dados confirmados
-│   └── backup-flash-nixos.md          guia de ambiente NixOS + backup via clipe SOIC-8
+│   ├── backup-flash-nixos.md          guia de ambiente NixOS + backup via clipe SOIC-8
+│   └── XM25QH128C_Ver2.1.pdf          datasheet da flash SPI
+├── DWIN_SET/                          assets stock de tela (referência; não é imagem de flash)
+├── images/                            fotos da placa/chip para documentação
 ├── tools/
 │   ├── spi_flash_programmer.ino       firmware Arduino (leitura/gravação SPI via clipe)
-│   └── spi_tool.py                    script Python de controle (dump/erase/write/verify)
+│   ├── spi_tool.py                    script Python de controle (dump/erase/write/verify)
 └── nix/
     └── shell.nix                      ambiente reprodutível (arduino-cli, sunxi-tools, python)
 ```
