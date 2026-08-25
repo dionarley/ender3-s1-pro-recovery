@@ -5,6 +5,8 @@ backup*.bin
 
 # Exceção: bins de config da pasta private/ (assets de referência, <150KB)
 !private/bin/*.bin
+# Exceção: dcboot.bin é a ferramenta de recuperação (boot Allwinner eGON, ~100KB)
+!/dcboot.bin
 
 # Python
 __pycache__/
