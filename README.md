@@ -9,11 +9,15 @@ card testada com o pacote correto e não funciona — a área de boot/OS da
 flash está corrompida, não apenas os assets de UI. Duas frentes de
 recuperação em andamento (ver `docs/plano-recuperacao-completo.md`).
 
-Material stock da tela foi localizado (`DWIN_SET/`, do fork
-ThomasToka/MarlinFirmware), mas **não resolve o brick diretamente**: são
-assets de atualização via SD (não uma imagem de 16 MB) e não contêm a
-área de boot/OS do F1C100s. Serve como referência para mapear offsets
-contra um dump futuro. Detalhes em `docs/plano-recuperacao-completo.md`.
+Material stock da tela foi localizado no fork ThomasToka/MarlinFirmware
+e está versionado aqui nas duas variantes (`DWIN_SET/` e `private/`),
+mas **nenhuma resolve o brick diretamente**: são assets de atualização
+via SD (não uma imagem de 16 MB) e não contêm a área de boot/OS do
+F1C100s. A pasta `private/` (formato DACAI, ~13 MB) é a referência mais
+promissora: cabe na flash de 16 MB e seus formatos `.zico`/`.zbmp` são
+parcialmente decodificáveis — será usada como assinatura contra um dump
+via FEL para identificar a variante e mapear offsets. Detalhes em
+`docs/plano-recuperacao-completo.md` (§2.5).
 
 ## Causa raiz
 
@@ -54,8 +58,10 @@ hipóteses (DWIN T5L, TJC), estão em `docs/plano-recuperacao-completo.md`.
 ├── docs/
 │   ├── plano-recuperacao-completo.md  plano atualizado com todos os dados confirmados
 │   ├── backup-flash-nixos.md          guia de ambiente NixOS + backup via clipe SOIC-8
+│   ├── 3D Printer User Manual Ender-3 S1 Pro.pdf  manual oficial
 │   └── XM25QH128C_Ver2.1.pdf          datasheet da flash SPI
-├── DWIN_SET/                          assets stock de tela (referência; não é imagem de flash)
+├── DWIN_SET/                          assets stock variante DWIN (referência; não é imagem de flash)
+├── private/                           assets stock variante DACAI (referência; ver §2.5 do plano)
 ├── images/                            fotos da placa/chip para documentação
 ├── tools/
 │   ├── spi_flash_programmer.ino       firmware Arduino (leitura/gravação SPI via clipe)

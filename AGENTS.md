@@ -24,6 +24,7 @@ Verified facts (do not guess or "fix" these when editing docs):
 - All docs and code comments are written in **Portuguese (pt-BR)**. Keep new content consistent.
 - `.gitignore` blocks `*.bin` / `dump*.bin` / `backup*.bin`. Never commit flash dumps (16MB each, hardware-specific).
 - `DWIN_SET/` is stock display UI assets copied from github.com/ThomasToka/MarlinFirmware — reference material only, don't modify.
+- `private/` is the stock DACAI-variant assets from the same fork — also reference material only. It is the primary offset-mapping reference (13 MB, parseable `.zico`/`.zbmp` formats; see plano §2.5). Don't modify.
 
 ## Environment
 
