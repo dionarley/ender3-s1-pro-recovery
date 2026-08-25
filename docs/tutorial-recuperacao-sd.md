@@ -18,6 +18,10 @@
 
 - **Confirme que este pacote é compatível com a S1 Pro.** O brick foi
   causado por pacote do modelo errado — não repita o erro.
+- **Use arquivos do MESMO pacote oficial.** Misturar `dcboot.bin` de
+  uma versão com `private/`/`firmware.zlib` de outra causou bricks
+  novos na comunidade (ver §2.8 do plano). Confira a origem dos
+  arquivos antes de prosseguir.
 - A **fase 1 é a mais crítica**: ela regrava a área de boot. Não
   interrompa a impressora durante o processo.
 - Se possível, faça antes um dump da flash atual via FEL ou clipe

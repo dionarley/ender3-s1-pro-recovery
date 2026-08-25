@@ -191,6 +191,37 @@ chegou a ser baixado junto — é firmware de **placa-mãe STM32F103**
 (vetores em `0x08000000`), não da tela; a placa local é F401. Não usar,
 não versionado.
 
+### 2.8 Validação por terceiros, alerta de versão casada e fontes alternativas
+
+Pesquisa na comunidade (issue #966 do mriscoc/Ender3V2S1 e fórum
+oficial Creality) confirma o diagnóstico e o caminho:
+
+- **O procedimento em duas fases funciona em casos análogos**: usuário
+  do fórum Creality com sintoma idêntico ("tela preta, só bipe ao
+  toque") recuperou a tela completando a instalação do pacote após o
+  `dcboot.bin` — mesma sequência do Readme oficial (§2.6).
+- **⚠️ Alerta crítico — versões casadas**: há relatos de bricks novos
+  causados por misturar versões (`dcboot.bin` de um pacote + `private/`
+  / `firmware.zlib` de outro = tela preta). O `dcboot.bin`, o
+  `firmware.zlib` e os assets do repositório devem vir do **mesmo
+  pacote oficial**. Antes do teste SD (§6 passo 1), confirmar a origem
+  comum dos arquivos.
+- **Marlin NÃO é ferramenta de recuperação da tela**: roda no STM32 da
+  placa-mãe e não existe caminho para escrever a flash da tela via UART
+  (só protocolo de VPs de UI). Usos legítimos: (a) impressora continua
+  utilizável via USB/OctoPrint durante a recuperação; (b) forks como o
+  ThomasToka exibem versão/fabricante da tela na página *About*,
+  útil para validar a recuperação e resolver a questão DWIN vs DACAI
+  (§2).
+- **Fontes alternativas confiáveis para pacotes de tela**:
+  - Releases do ThomasToka/MarlinFirmware (pacotes testados +
+    `installation.txt`)
+  - Pasta `display assets` do repo mriscoc/Ender3V2S1 (inclui
+    `dacai_update.zip`)
+  - Downloads oficiais Creality (ex.: pacote
+    `Marlin2.0.8_Ender-3S1_HWv24S1_301_SWV3.1.9_Two_C_F401_FDM_LASER`,
+    que contém `dcboot.bin` + `private` + `firmware.zlib`)
+
 ---
 
 ## 3. O que já foi tentado e descartado
