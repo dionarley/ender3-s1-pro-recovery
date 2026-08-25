@@ -18,7 +18,7 @@ Verified facts (do not guess or "fix" these when editing docs):
 - Display SoC: **Allwinner F1C100s** (QFN88) — NOT a DWIN T5L ASIC, NOT DACAI silicon. FEL mode over USB appears as `1f3a:efe8`; relevant pins: 67 UVCC (3.3V), 68 USB-DM, 69 USB-DP, 70 RESET#.
 - SPI flash: XMC XM25QH128CHIG — 128 Mbit / 16 MB / exactly `16777216` bytes.
 - Software layer: DGUS/K600+ conventions (Lua VP calls; `13.bin`/`14.bin`/`22.bin`) running over the Allwinner SoC. Whether this unit is the DWIN or DACAI display *variant* is an open question — never state it as settled.
-- No public algorithm exists to pack the stock asset folders (`DWIN_SET/`, `private/`) into the final 16 MB flash image — this remains the project's bottleneck.
+- No public algorithm exists to pack the stock asset folders (`DWIN_SET/`, `private/`) into the final 16 MB flash image. This blocked earlier strategies; the current plan bypasses it with the official two-phase SD kit / Frente C (see plano §0, §2.6–§2.7, §4.3). Remaining caveat: confirm all kit files come from the same official package (§2.8).
 
 ## Conventions
 

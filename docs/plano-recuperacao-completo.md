@@ -7,20 +7,25 @@
 
 A tela touch do Ender-3 S1 Pro está com a área de boot/OS da flash corrompida.
 A recuperação padrão via cartão SD **não funciona** (testado e confirmado).
-Existem duas frentes viáveis de recuperação, que podem ser tocadas em
-paralelo:
+Existem três frentes de recuperação, em ordem de prioridade:
 
-- **Frente A — Modo FEL via USB**: usa um recurso de fábrica do chip
-  Allwinner que roda direto da ROM interna (não pode ser corrompido por
-  firmware). Tecnicamente mais elegante, mas exige solda fina em
-  encapsulamento QFN88.
-- **Frente B — Backup físico via CH341A/Arduino**: só é útil quando
-  houver uma imagem de referência real (chip doador ou dump de outro
-  usuário) para copiar. Sem isso, serve apenas para diagnóstico.
+- **Via SD em duas fases (prioridade 1)** — o kit oficial está completo
+  e versionado no repo (`dcboot.bin` + `firmware.zlib` + assets,
+  §2.6–§2.7). Procedimento validado por terceiros com sintoma idêntico
+  (§2.8). Tutorial pronto: `docs/tutorial-recuperacao-sd.md`. É o único
+  caminho **sem solda**.
+- **Frente C — Híbrida (prioridade 2)** — gravar o `dcboot.bin`
+  direto na flash no offset 0 via FEL ou clipe SOIC-8 (§4.3), depois
+  fase 2 via SD. Elimina a dependência de código vivo na tela.
+- **Frentes A/B — FEL via USB / backup físico** (fallback) — a Frente A
+  dá acesso de recuperação imutável pela ROM do Allwinner (exige acesso
+  aos pinos 67–70); a Frente B serve para diagnóstico/doação de dump.
 
-Em ambos os casos, **ainda falta uma imagem de 16MB confiável para gravar**
-— isso não foi resolvido, apenas o caminho técnico para usá-la ficou mais
-claro.
+O antigo gargalo ("falta imagem de 16 MB confiável") foi contornado:
+o bootloader oficial (`dcboot.bin`) e o OS (`firmware.zlib`) são
+aplicáveis diretamente, sem precisar reconstruir a imagem completa.
+Resta como ressalva confirmar que os arquivos do kit vêm do mesmo
+pacote oficial compatível com a S1 Pro (§2.8).
 
 ---
 
@@ -420,22 +425,27 @@ Ressalvas e segurança:
 
 ---
 
-## 5. Busca por imagem de referência confiável
+## 5. Busca por referências confiáveis
 
-Com os termos corretos agora identificados, vale reabrir a busca —
-específica e diferente da anterior:
+O item de maior prioridade anterior — obter o `dcboot.bin` oficial —
+**foi cumprido**: o arquivo está versionado no repo (§2.7). A busca
+continua com dois objetivos:
 
-- **`dcboot.bin` oficial do S1 Pro** — prioridade máxima (ver §2.6):
-  buscar no site da Creality, nos releases ZIP do fork ThomasToka e em
-  repositórios/fóruns que espelhem os pacotes de tela oficiais
-- `"F1C100s" "Ender 3 S1 Pro" screen dump`
-- `"K600+" DGUS Creality touchscreen recovery`
-- Fóruns de eletrônica hobbista (elektroda.com, linux-sunxi forums,
-  EEVblog) em vez de fóruns de impressão 3D — porque essa combinação de
-  hardware atrai um público diferente (hackers de Allwinner), não o
-  público tradicional de reparo de impressora
-- GitHub: buscar por repositórios que mencionem `F1C100s` + `Creality`
-  ou `DGUS` + `sunxi-fel`
+- **Confirmar a origem do kit atual**: localizar o pacote oficial
+  Creality exato de onde vieram o `dcboot.bin` e o `firmware.zlib`
+  versionados, garantindo que são da mesma versão e compatíveis com a
+  S1 Pro (alerta de versão casada, §2.8). Fontes: site da Creality,
+  releases do fork ThomasToka, pasta `display assets` do mriscoc
+- **Dump completo de 16 MB da comunidade** (para as Frentes B/C como
+  alternativa definitiva):
+  - `"F1C100s" "Ender 3 S1 Pro" screen dump`
+  - `"K600+" DGUS Creality touchscreen recovery`
+  - Fóruns de eletrônica hobbista (elektroda.com, linux-sunxi forums,
+    EEVblog) em vez de fóruns de impressão 3D — porque essa combinação
+    de hardware atrai um público diferente (hackers de Allwinner), não
+    o público tradicional de reparo de impressora
+  - GitHub: buscar por repositórios que mencionem `F1C100s` +
+    `Creality` ou `DGUS` + `sunxi-fel`
 
 Se alguém já fez essa recuperação por FEL em outra unidade, é bem
 provável que tenha publicado o dump justamente porque o modo FEL torna
@@ -448,29 +458,26 @@ pronto).
 
 1. **Tentar o procedimento SD em duas fases (§2.7) — o kit está
    completo e versionado no repo (`dcboot.bin` + `firmware.zlib` +
-   `private/` + `DWIN_SET/`).** Fase 1 = apenas `dcboot.bin`; fase 2 =
-   remover `dcboot.bin` e colocar os demais. É o único caminho que pode
-   resolver **sem solda**. Se falhar, obter alternativa: buscar outra
-   fonte do `dcboot.bin` oficial do S1 Pro e confirmar compatibilidade
-2. Preparar ambiente NixOS atualizado (Seção 4.1.1) — baixo risco, faça
-   já
-3. Teste de continuidade nos pinos 67–70 (Seção 4.1.2) — baixo risco,
-   sem solda ainda
-4. Busca direcionada por dump da comunidade (Seção 5) — em paralelo,
-   custo zero
-5. Decisão: se achar trilha acessível sem solda em componente próximo →
-   conectar USB e testar `sunxi-fel version` (Seção 4.1.3)
-6. **Se o SD falhar (passo 1) e houver acesso FEL → Frente C (§4.3):
-   gravar `dcboot.bin` direto na flash** (`sunxi-fel spiflash-write 0
-   dcboot.bin`), depois fase 2 via SD. Alternativa sem FEL: mesma
-   gravação via clipe SOIC-8 com a imagem padada para 16 MB (§4.3)
-7. Se não houver ponto acessível → avaliar se vale soldar direto no
-   QFN88 (considerar buscar ajuda de alguém com experiência em retrabalho
-   fino, se você não tiver)
-8. Assim que houver imagem confiável (doador via Frente B, ou dump da
-   comunidade) → gravar via FEL (mais seguro) ou via clipe SOIC-8
-   (alternativa)
-9. Verificar sempre lendo de volta e comparando hash antes de remontar
+   `private/` + `DWIN_SET/`).** Antes: confirmar que os arquivos vêm
+   do mesmo pacote oficial (§2.8). Fase 1 = apenas `dcboot.bin`;
+   fase 2 = remover `dcboot.bin` e colocar os demais. É o único caminho
+   que pode resolver **sem solda**
+2. Se o SD falhar → **Frente C (§4.3)**: gravar `dcboot.bin` direto na
+   flash no offset 0. Via FEL se houver acesso USB; via clipe SOIC-8
+   com imagem padada para 16 MB caso contrário. Depois, fase 2 via SD
+3. Preparar ambiente NixOS atualizado (Seção 4.1.1) — baixo risco, faça
+   já (necessário para os passos seguintes)
+4. Teste de continuidade nos pinos 67–70 (Seção 4.1.2) — baixo risco,
+   sem solda ainda; habilita a Frente C via FEL
+5. Busca por confirmação de origem do kit e dump da comunidade
+   (Seção 5) — em paralelo, custo zero
+6. Se não houver ponto acessível para FEL → avaliar se vale soldar
+   direto no QFN88 (considerar buscar ajuda de alguém com experiência
+   em retrabalho fino, se você não tiver)
+7. Último recurso: imagem completa de 16 MB (doador via Frente B, ou
+   dump da comunidade) → gravar via FEL (mais seguro) ou via clipe
+   SOIC-8 (alternativa)
+8. Verificar sempre lendo de volta e comparando hash antes de remontar
 
 ---
 

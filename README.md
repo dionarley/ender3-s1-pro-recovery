@@ -76,16 +76,24 @@ hipóteses (DWIN T5L, TJC), estão em `docs/plano-recuperacao-completo.md`.
     └── shell.nix                       ambiente reprodutível (arduino-cli, sunxi-tools, python)
 ```
 
-## Duas frentes de recuperação
+## Frentes de recuperação (em ordem de prioridade)
 
-1. **FEL via USB** — usa o modo de recuperação de fábrica do SoC Allwinner
-   (não pode ser corrompido por firmware). Requer localizar/acessar os
-   pinos 67–70 do F1C100s fisicamente.
-2. **Backup físico via CH341A/Arduino** — útil quando houver um chip
-   doador ou dump de outro usuário para comparar/gravar.
+1. **SD em duas fases** — kit oficial completo no repo (`dcboot.bin` +
+   `firmware.zlib` + `private/` + `DWIN_SET/`). Fase 1 regrava a área
+   de boot; fase 2, OS e assets. Único caminho sem solda. Siga o
+   `docs/tutorial-recuperacao-sd.md`.
+2. **Frente C — híbrida** — gravar o `dcboot.bin` direto na flash
+   (offset 0) via FEL ou clipe SOIC-8, depois fase 2 via SD. Ver §4.3
+   do plano.
+3. **FEL via USB** — modo de recuperação de fábrica do SoC Allwinner
+   (não pode ser corrompido por firmware). Requer acesso aos pinos
+   67–70 do F1C100s.
+4. **Backup físico via CH341A/Arduino** — diagnóstico, comparação com
+   chip doador ou gravação de dump completo.
 
-Em ambos os casos, ainda falta uma imagem de 16MB confiável para gravar
-— esse é o gargalo atual do projeto.
+O antigo gargalo ("falta imagem de 16 MB") foi contornado pelo kit
+oficial; a ressalva restante é confirmar a origem comum dos arquivos
+do kit (§2.8 do plano).
 
 ## Como contribuir / linha do tempo
 
